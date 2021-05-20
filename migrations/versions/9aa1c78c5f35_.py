@@ -34,7 +34,7 @@ def upgrade():
                nullable=True)
     op.alter_column('user', 'password',
                existing_type=mysql.VARCHAR(length=80),
-               nullable=True)
+               nullable=True, new_column_name='_password')
     # ### end Alembic commands ###
 
 

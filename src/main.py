@@ -46,13 +46,48 @@ def get_users_by_email(email):
 
     return jsonify(user), 200
 
+@app.route('/tasks/<user_id>', methods=['GET'])
+def get_tasks_by_user(user_id):
+    task = Tasks.get_tasks_by_user(user_id)
+
+    response_body = {
+        "msg": "Hello, this is your GET /user response "
+    }
+
+    return jsonify(task), 200
+
+@app.route('/tasks', methods=['GET'])
+def get_all_tasks():
+        tasks = Tasks.get_all_tasks()
+
+        return jsonify(tasks), 200
+
+
+@app.route('/user', methods=['POST'])
+def create_user():
+    email, password = request.json.get("email", None),request.json.get("password", None)
+    new_user = User(email=email, _password=password)
+    return jsonify(new_user.create()), 201
+
+@app.route('/tasks', methods=['POST'])
+def create_task():
+    description = request.json.get("description", None)
+    new_description = Tasks(description=description)
+    return jsonify(new_description.create()), 201    
+    
+@app.route('/user/<email>', methods=['DELETE'])
+def delete_user(email):
+    print(email,"papapapapapapapapapapapapapappapap")
+    user = User.get_by_email(email)
+    print(user,"pepepepepepepepepepepepepepepeep")
+    if user:
+        user_del = user.delete()
+        return jsonify(user_del), 204
+    else:
+        return 'That username does not exist', 404
+
+
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
     app.run(host='0.0.0.0', port=PORT, debug=False)
-
-
-def get_user():
-    pass
-    
-

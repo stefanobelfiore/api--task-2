@@ -7,7 +7,7 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), unique = True)
-    password = db.Column(db.String(20))
+    _password = db.Column(db.String(20))
     is_active = db.Column(db.Boolean(), unique = False)
  
 
@@ -23,16 +23,24 @@ class User(db.Model):
 
     def get_all():
         users = User.query.all()
-        print(users)
         users_dict = list(map(lambda x: x.serialize(), users ))
-        print(users_dict)
         return users_dict
 
     def get_by_email(email):
         user = User.query.filter_by(email=email)
         user_dict = list(map(lambda x: x.serialize(), user))
-        print(user)
         return user_dict
+
+    def create(self):
+        db.session.add(self)
+        db.session.commit()
+        return self.serialize()
+
+    def delete(self):
+            db.session.delete(self)
+            db.session.commit()
+            return self.serialize()        
+
 
 class Tasks(db.Model):
     __tablename__ = 'tasks'
@@ -53,3 +61,18 @@ class Tasks(db.Model):
             "done": self.done
             # do not serialize the password, its a security breach
         }
+
+    def get_all_tasks():
+            tasks = Tasks.query.all()
+            tasks_dict = list(map(lambda x: x.serialize(), tasks ))
+            return tasks_dict
+
+    def get_tasks_by_user(user_id):
+            tasks = Tasks.query.filter_by(user_id=user_id)
+            tasks_dict = list(map(lambda x: x.serialize(), tasks))
+            return tasks_dict
+
+    def create(self):
+            db.session.add(self)
+            db.session.commit()
+            return self.serialize()
