@@ -77,9 +77,7 @@ def create_task():
     
 @app.route('/user/<email>', methods=['DELETE'])
 def delete_user(email):
-    print(email,"papapapapapapapapapapapapapappapap")
     user = User.get_by_email(email)
-    print(user,"pepepepepepepepepepepepepepepeep")
     if user:
         user_del = user.delete()
         return jsonify(user_del), 204

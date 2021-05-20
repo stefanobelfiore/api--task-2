@@ -26,10 +26,10 @@ class User(db.Model):
         users_dict = list(map(lambda x: x.serialize(), users ))
         return users_dict
 
-    def get_by_email(email):
-        user = User.query.filter_by(email=email)
-        user_dict = list(map(lambda x: x.serialize(), user))
-        return user_dict
+    @classmethod
+    def get_by_email(cls, email):
+        user = cls.query.filter_by(email=email).one_or_none()
+        return user.serialize() if user else None
 
     def create(self):
         db.session.add(self)
@@ -37,9 +37,9 @@ class User(db.Model):
         return self.serialize()
 
     def delete(self):
-            db.session.delete(self)
-            db.session.commit()
-            return self.serialize()        
+        db.session.delete(self)
+        db.session.commit()
+        return self.serialize()        
 
 
 class Tasks(db.Model):
