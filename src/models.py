@@ -38,7 +38,7 @@ class User(db.Model):
         return self.serialize()
     
     @classmethod
-    def delete(cls, email):
+    def delete_user(cls, email):
         user = cls.query.filter_by(email=email).one_or_none()
         if user:
             db.session.delete(user)
@@ -87,3 +87,16 @@ class Tasks(db.Model):
             db.session.add(self)
             db.session.commit()
             return self.serialize()
+
+
+    # @classmethod
+    # def delete_task(cls, email):
+    #     task = cls.query.filter_by(email=email).one_or_none()
+    #     if task:
+    #         db.session.delete(task)
+    #         db.session.commit()
+    #         return task.serialize()  
+    #     else:
+    #         return None   
+
+   

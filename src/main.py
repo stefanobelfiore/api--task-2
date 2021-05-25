@@ -24,7 +24,7 @@ setup_admin(app)
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
-    return jsonify(error.to_dict()), error.status_code
+    return jsonify(error.serialize()), error.status_code
 
 # generate sitemap with all your endpoints
 @app.route('/')
@@ -34,8 +34,12 @@ def sitemap():
 @app.route('/user', methods=['GET'])
 def get_all():
         all_users = User.get_all()
+        if all_users:
+            return jsonify(all_users), 200
+        else:
+            return jsonify({'error' : 'That user does not exist'}) , 404    
 
-        return jsonify(all_users), 200
+        
 
 @app.route('/user/<email>', methods=['GET'])
 def get_users_by_email(email):
@@ -49,24 +53,30 @@ def get_users_by_email(email):
 def get_tasks_by_user(user_id):
     task = Tasks.get_tasks_by_user(user_id)
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
-
-    return jsonify(task), 200
+    if task:
+        return jsonify(task), 200
+    else:
+        return jsonify({'error' : 'That username does not exist'}) , 404    
 
 @app.route('/tasks', methods=['GET'])
 def get_all_tasks():
         tasks = Tasks.get_all_tasks()
 
-        return jsonify(tasks), 200
+        if tasks:
+            return jsonify(tasks), 200
+        else:
+            return jsonify({'error' : 'That tasks does not exist'}) , 404
 
 
 @app.route('/user', methods=['POST'])
 def create_user():
     email, password = request.json.get("email", None),request.json.get("password", None)
     new_user = User(email=email, _password=password)
-    return jsonify(new_user.create()), 201
+    new_user_dic = new_user.create()
+    if new_user_dic:
+        return jsonify(new_user_dic), 201
+    else:
+        return jsonify({'error' : 'That user does not exist'}) , 404
 
 @app.route('/tasks', methods=['POST'])
 def create_task():
@@ -80,12 +90,21 @@ def create_task():
     
 @app.route('/user/<email>', methods=['DELETE'])
 def delete_user(email):
-    user = User.delete(email)
+    user = User.delete_user(email)
     if user:
         
         return jsonify({'mgg' : user}), 204
     else:
         return jsonify({'error' :'That username does not exist'}), 404
+
+# @app.route('/user/<email>', methods=['DELETE'])
+# def delete_task(email):
+#     task = Task.delete_task(email)
+#     if task:
+        
+#         return jsonify({'mgg' : task}), 204
+#     else:
+#         return jsonify({'error' :'That task does not exist'}), 404
 
 
 # this only runs if `$ python src/main.py` is executed
