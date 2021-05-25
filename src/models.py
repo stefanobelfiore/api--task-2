@@ -36,11 +36,21 @@ class User(db.Model):
         db.session.add(self)
         db.session.commit()
         return self.serialize()
+    
+    @classmethod
+    def delete(cls, email):
+        user = cls.query.filter_by(email=email).one_or_none()
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            return user.serialize()  
+        else:
+            return None    
 
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-        return self.serialize()        
+    # def delete(self):
+    #     db.session.delete(self)
+    #     db.session.commit()
+    #     return self.serialize()        
 
 
 class Tasks(db.Model):

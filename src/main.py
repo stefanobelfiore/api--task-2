@@ -40,12 +40,10 @@ def get_all():
 @app.route('/user/<email>', methods=['GET'])
 def get_users_by_email(email):
     user = User.get_by_email(email)
-
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
-
-    return jsonify(user), 200
+    if user: 
+        return jsonify(user), 200
+    else:
+        return jsonify({'error' : 'That username does not exist'}) , 404    
 
 @app.route('/tasks/<user_id>', methods=['GET'])
 def get_tasks_by_user(user_id):
@@ -74,16 +72,20 @@ def create_user():
 def create_task():
     description = request.json.get("description", None)
     new_description = Tasks(description=description)
-    return jsonify(new_description.create()), 201    
+    new_task = new_description.create()
+    if new_task:
+        return jsonify({'response':new_task}), 201  
+    else:
+        return jsonify({'error' : 'That task did not create'}) , 400     
     
 @app.route('/user/<email>', methods=['DELETE'])
 def delete_user(email):
-    user = User.get_by_email(email)
+    user = User.delete(email)
     if user:
-        user_del = user.delete()
-        return jsonify(user_del), 204
+        
+        return jsonify({'mgg' : user}), 204
     else:
-        return 'That username does not exist', 404
+        return jsonify({'error' :'That username does not exist'}), 404
 
 
 # this only runs if `$ python src/main.py` is executed
