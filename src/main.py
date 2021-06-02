@@ -97,14 +97,22 @@ def delete_user(email):
     else:
         return jsonify({'error' :'That username does not exist'}), 404
 
-# @app.route('/user/<email>', methods=['DELETE'])
-# def delete_task(email):
-#     task = Task.delete_task(email)
-#     if task:
-        
-#         return jsonify({'mgg' : task}), 204
-#     else:
-#         return jsonify({'error' :'That task does not exist'}), 404
+@app.route('/task/<id>', methods=['DELETE'])
+def delete_task(id):
+    task = Tasks.delete_task(id)
+    if task:
+        return jsonify({'mgg' : task}), 204
+    else:
+        return jsonify({'error' :'That task does not exist'}), 404
+
+@app.route('/task/<id>', methods=['PATCH'])
+def edit_task(id):
+    description_task = request.json.get("description", None)
+    task = Tasks.edit_task(id, description_task)
+    if task:
+        return jsonify({'mgg' : task.serialize()}), 204
+    else:
+        return jsonify({'error' :'That task does not exist'}), 404
 
 
 # this only runs if `$ python src/main.py` is executed

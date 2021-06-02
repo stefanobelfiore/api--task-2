@@ -89,14 +89,22 @@ class Tasks(db.Model):
             return self.serialize()
 
 
-    # @classmethod
-    # def delete_task(cls, email):
-    #     task = cls.query.filter_by(email=email).one_or_none()
-    #     if task:
-    #         db.session.delete(task)
-    #         db.session.commit()
-    #         return task.serialize()  
-    #     else:
-    #         return None   
+    @classmethod
+    def delete_task(cls, id):
+        task = cls.query.filter_by(id=id).one_or_none()
+        if task:
+            db.session.delete(task)
+            db.session.commit()
+            return task.serialize()  
+        else:
+            return None   
 
-   
+    @classmethod
+    def edit_task(cls, id, description):
+        task = cls.query.filter_by(id=id).one_or_none()
+        if task and description:
+            task.description = description
+            db.session.commit()
+            return task 
+        else:
+            return None   
